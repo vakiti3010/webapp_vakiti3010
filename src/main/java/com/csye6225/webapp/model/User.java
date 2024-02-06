@@ -1,4 +1,4 @@
-package com.csye6225.webapp.models;
+package com.csye6225.webapp.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;

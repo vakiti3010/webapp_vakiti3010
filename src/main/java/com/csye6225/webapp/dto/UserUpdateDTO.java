@@ -1,7 +1,11 @@
-package com.csye6225.webapp.models;
+package com.csye6225.webapp.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserUpdateDTO {
+    @JsonProperty("first_name")
     private String firstName;
+    @JsonProperty("last_name")
     private String lastName;
     private String password;
     private String username;

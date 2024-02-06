@@ -1,4 +1,4 @@
-package com.csye6225.webapp;
+package com.csye6225.webapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

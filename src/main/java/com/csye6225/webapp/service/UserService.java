@@ -1,16 +1,14 @@
-package com.csye6225.webapp.services;
+package com.csye6225.webapp.service;
 
-import com.csye6225.webapp.customExceptions.UserAlreadyExistsException;
-import com.csye6225.webapp.models.User;
-import com.csye6225.webapp.models.UserUpdateDTO;
+import com.csye6225.webapp.exception.UserAlreadyExistsException;
+import com.csye6225.webapp.model.User;
+import com.csye6225.webapp.dto.UserUpdateDTO;
 import com.csye6225.webapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 public class UserService {

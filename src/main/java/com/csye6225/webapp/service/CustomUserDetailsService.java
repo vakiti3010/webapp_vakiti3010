@@ -1,8 +1,8 @@
-package com.csye6225.webapp.services;
+package com.csye6225.webapp.service;
 
 import com.csye6225.webapp.repository.UserRepository;
 // Remove the aliasing in import
-import com.csye6225.webapp.models.User;
+import com.csye6225.webapp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

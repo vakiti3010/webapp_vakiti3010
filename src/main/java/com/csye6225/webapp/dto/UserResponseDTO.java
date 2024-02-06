@@ -1,14 +1,19 @@
-package com.csye6225.webapp.models;
+package com.csye6225.webapp.dto;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class UserResponseDTO {
     private UUID id;
+    @JsonProperty("first_name")
     private String firstName;
+    @JsonProperty("last_name")
     private String lastName;
     private String username;
+    @JsonProperty("account_created")
     private String accountCreated;
+    @JsonProperty("account_updated")
     private String accountUpdated;
 
     public UUID getId() {
