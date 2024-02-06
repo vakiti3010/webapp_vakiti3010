@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("v1/user")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
