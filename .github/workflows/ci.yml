@@ -1,0 +1,26 @@
+name: Java CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # You can choose different runners
+    steps:
+      - uses: actions/checkout@v3  # Checkout your repository code
+      - name: Set up Java JDK
+        uses: actions/setup-java@v4  # Install JDK 17
+        with:
+          java-version: 17
+      - name: Cache Maven packages
+        uses: actions/cache@v3  # Cache dependencies to speed up builds
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ matrix.java-version }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+      - name: Build with Maven
+        run: mvn compile  # Or your preferred build command
+      - name: Run tests
+        run: mvn test  # Or your preferred test command
