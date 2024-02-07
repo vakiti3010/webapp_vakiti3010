@@ -2,10 +2,11 @@ name: Java CI
 
 on:
   pull_request:
-    branches: [ vakiti_dev ]
+    branches: [ main ]
 
 jobs:
   build:
+    name: Java CI
     runs-on: ubuntu-latest  # You can choose different runners
     steps:
       - uses: actions/checkout@v3  # Checkout your repository code
