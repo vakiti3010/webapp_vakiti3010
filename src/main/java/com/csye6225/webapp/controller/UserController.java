@@ -1,5 +1,6 @@
 package com.csye6225.webapp.controller;
 
+import com.csye6225.webapp.exception.UserUpdateException;
 import com.csye6225.webapp.model.User;
 import com.csye6225.webapp.dto.UserResponseDTO;
 import com.csye6225.webapp.dto.UserUpdateDTO;
@@ -37,7 +38,7 @@ public class UserController {
     @PutMapping("/self")
     public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO, Principal principal) {
         if (!principal.getName().equals(userUpdateDTO.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can only update your own account information.");
+            throw new UserUpdateException("You can only update your own account information.");
         }
 
         try {

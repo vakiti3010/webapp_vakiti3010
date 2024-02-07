@@ -1,6 +1,7 @@
 package com.csye6225.webapp.service;
 
 import com.csye6225.webapp.exception.UserAlreadyExistsException;
+import com.csye6225.webapp.exception.UserNotFoundException;
 import com.csye6225.webapp.model.User;
 import com.csye6225.webapp.dto.UserUpdateDTO;
 import com.csye6225.webapp.repository.UserRepository;
@@ -49,7 +50,7 @@ public class UserService {
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 }
 
