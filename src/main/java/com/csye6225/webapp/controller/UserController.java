@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
@@ -22,14 +20,11 @@ import java.util.UUID;
 @RequestMapping("v1/user")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     @Autowired
     private UserService userService;
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
-        logger.info("Attempting to create user: {}", user.getUsername());
         User createdUser = userService.createUser(user);
         UserResponseDTO response = mapToUserResponseDTO(createdUser);
         return ResponseEntity.ok(response);
