@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Integration Tests
         env:
-         DB_URL: jdbc:mysql://localhost:3306/webapp_DB
-         DB_USERNAME: root
-         DB_PASSWORD: saikumar123
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/CSYE6225?createDatabaseIfNotExist=true
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: saikumar123
         run: mvn -B verify
