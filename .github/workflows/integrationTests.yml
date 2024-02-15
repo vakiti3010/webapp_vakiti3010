@@ -17,7 +17,7 @@ jobs:
 
       - name: Start MariaDB Service
         run: sudo service mariadb start
-        
+
       - name: Set up MySQL Root Password
         run: |
           sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'saikumar123';"
@@ -28,5 +28,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Build jar and run Maven
+        run: |
+          mvn install -DskipTests 
+          cd target
+          nohup java -jar webapp-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+
+      - name: Wait for Application to Start
+        run: sleep 40
+
       - name: Run Integration Tests
-        run: mvn -B verify
+        env:
+         DB_URL: jdbc:mysql://localhost:3306/webapp_DB
+         DB_USERNAME: root
+         DB_PASSWORD: saikumar123
+        run: mvn test
