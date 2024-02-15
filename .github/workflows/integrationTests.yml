@@ -6,27 +6,28 @@ on:
       - main
 
 jobs:
-  name: MySQL Integration Tests
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install MariaDB
+      - name: Install MySQL
         run: |
           sudo apt-get update
-          sudo apt-get install -y mariadb-server
+          sudo apt-get install -y mysql-server
           sudo mysql_secure_installation
-          
 
-      - name: Start MariaDB Service
-        run: sudo systemctl start mariadb
-          sudo mysql -u root -e "alter user 'root'@'localhost' identified by 'saikumar123' ;"
+      - name: Start MySQL Service
+        run: sudo systemctl start mysql
+
+      - name: Set up MySQL Root Password
+        run: |
+          sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'saikumar123';"
 
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'temurin'
 
       - name: Run Integration Tests
         run: mvn -B verify
+
