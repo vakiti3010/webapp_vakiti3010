@@ -97,7 +97,7 @@ public class UserIntegrationTests {
                 UserResponseDTO.class
         );
 
-        assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, updateResponse.getStatusCode());
 
         // Validate that the user's information was updated
         ResponseEntity<UserResponseDTO> getResponse = restTemplate.exchange(

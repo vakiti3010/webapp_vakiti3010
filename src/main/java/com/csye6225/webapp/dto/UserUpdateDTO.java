@@ -2,6 +2,9 @@ package com.csye6225.webapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class UserUpdateDTO {
     @JsonProperty("first_name")
     private String firstName;
@@ -34,4 +37,17 @@ public class UserUpdateDTO {
         this.password = password;
     }
 
+    public Map<String, Object> getAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+        if (firstName != null) {
+            attributes.put("first_name", firstName);
+        }
+        if (lastName != null) {
+            attributes.put("last_name", lastName);
+        }
+        if (password != null) {
+            attributes.put("password", password);
+        }
+        return attributes;
+    }
 }

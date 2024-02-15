@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("v1/user")
@@ -25,6 +25,9 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("Password cannot be empty.");
+        }
         User createdUser = userService.createUser(user);
         UserResponseDTO response = mapToUserResponseDTO(createdUser);
         return ResponseEntity.ok(response);
@@ -39,15 +42,20 @@ public class UserController {
         try {
             // Proceed with updating the user
             User updatedUser = userService.updateUser(currentUsername, userUpdateDTO);
-            UserResponseDTO response = mapToUserResponseDTO(updatedUser);
-            return ResponseEntity.ok(response);
+            // Return 204 No Content if the update was successful
+            return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/self")
-    public ResponseEntity<UserResponseDTO> getUserDetails() {
+    public ResponseEntity<?> getUserDetails(@RequestBody(required = false) Object requestBody) {
+        // Check if there is a payload attached to the request
+        if (requestBody != null) {
+            return ResponseEntity.badRequest().body("GET requests should not include a request body.");
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
@@ -56,6 +64,7 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+
 
     private UserResponseDTO mapToUserResponseDTO(User user) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
