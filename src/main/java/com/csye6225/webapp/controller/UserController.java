@@ -31,13 +31,14 @@ public class UserController {
     }
 
     @PutMapping("/self")
-    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO, Principal principal) {
-        if (!principal.getName().equals(userUpdateDTO.getUsername())) {
-            throw new UserUpdateException("You can only update your own account information.");
-        }
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
+        // Retrieve the authenticated user's username from the SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
 
         try {
-            User updatedUser = userService.updateUser(userUpdateDTO.getUsername(), userUpdateDTO);
+            // Proceed with updating the user
+            User updatedUser = userService.updateUser(currentUsername, userUpdateDTO);
             UserResponseDTO response = mapToUserResponseDTO(updatedUser);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {

@@ -1,0 +1,33 @@
+name: MySQL Integration Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: MySQL Integration Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: saikumar123
+          MYSQL_DATABASE: CSYE6225
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Integration Tests
+        run: mvn -B verify
