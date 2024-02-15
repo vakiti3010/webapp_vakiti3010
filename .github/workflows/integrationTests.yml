@@ -1,4 +1,4 @@
-name: MySQL Integration Tests
+name: Integration Tests
 
 on:
   pull_request:
@@ -7,7 +7,9 @@ on:
 
 jobs:
   build:
+    name: INTEGRATION TEST
     runs-on: ubuntu-latest
+    
 
     steps:
       - name: Install MariaDB
