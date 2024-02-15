@@ -22,6 +22,7 @@ jobs:
         run: |
           sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'saikumar123';"
 
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
