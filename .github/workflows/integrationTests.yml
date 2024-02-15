@@ -2,26 +2,25 @@ name: MySQL Integration Tests
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
+  name: MySQL Integration Tests
   build:
-    name: MySQL Integration Tests
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8
-        env:
-          MYSQL_ROOT_PASSWORD: saikumar123
-          MYSQL_DATABASE: CSYE6225
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Install MariaDB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-server
+          sudo mysql_secure_installation
+          
+
+      - name: Start MariaDB Service
+        run: sudo systemctl start mariadb
+          sudo mysql -u root -e "alter user 'root'@'localhost' identified by 'saikumar123' ;"
 
       - name: Set up JDK
         uses: actions/setup-java@v2
