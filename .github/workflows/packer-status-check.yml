@@ -15,7 +15,7 @@ jobs:
         uses: hashicorp/setup-packer@v2.0.1
 
       - name: Run packer fmt
-        run: packer fmt *.pkr.hcl
+        run: packer fmt packer/*.pkr.hcl
 
       - name: Check for Formatting Changes
         id: check_modifications
