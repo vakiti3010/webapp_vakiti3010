@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest  # OS environment to run on
     steps:
       - uses: actions/checkout@v3  # Checkout the repository
-      - uses: hashicorp/setup-packer@v1  # Setup Packer
+      - uses: hashicorp/setup-packer@v1.9.4  # Setup Packer
         with:
           version: latest  # Or a specific version
 
