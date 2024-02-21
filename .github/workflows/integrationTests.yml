@@ -54,6 +54,6 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_ACCESS_KEY_ID }}
         run: |
           echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -d > /tmp/keyfile.json 
-          cat /tmp/keyfile.json # Inspect the contents
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/keyfile.json
           packer build packer/image.pkr.hcl
       
