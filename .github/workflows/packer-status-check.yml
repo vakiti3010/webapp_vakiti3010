@@ -28,4 +28,4 @@ jobs:
           fi 
 
       - name: Run packer validate
-        run: packer validate *.pkr.hcl
+        run: packer validate packer/*.pkr.hcl
