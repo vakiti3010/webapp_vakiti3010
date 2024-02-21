@@ -17,11 +17,6 @@ variable "tmp_service_file" {
   default = ""
 }
 
-variable "provision_file" {
-  type    = string
-  default = "provision.sh"
-}
-
 source "googlecompute" "centos-stream-8" {
   project_id          = "vakiti-dev"
   zone                = "us-central1-a"
@@ -57,7 +52,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "${var.provision_file}"
+    script = "packer/provision.sh"
   }
 }
 
