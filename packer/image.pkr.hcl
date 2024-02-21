@@ -1,5 +1,14 @@
+packer {
+  required_plugins {
+    googlecompute = {
+      version = "~> 1.0"
+      source  = "github.com/hashicorp/googlecompute"
+    }
+  }
+}
+
 source "googlecompute" "centos-stream-8" {
-  project_id          = "csye6225-spring"
+  project_id          = "vakiti-dev"
   zone                = "us-central1-a"
   image_name          = "my-app-image-{{timestamp}}"
   source_image_family = "centos-stream-8"
@@ -28,8 +37,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "your-app.service"      # Adjust the path here if needed
-    destination = "/tmp/your-app.service" # Temporary location
+    source      = "your-app.service"
+    destination = "/tmp/your-app.service"
   }
 
   provisioner "shell" {
