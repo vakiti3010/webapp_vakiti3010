@@ -52,8 +52,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "your-app.service"
     source      = "${var.service_file}"
+    destination      = "/tmp/your-app.service"
   }
 
   provisioner "shell" {
