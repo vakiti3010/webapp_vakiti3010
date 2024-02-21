@@ -53,7 +53,7 @@ build {
 
   provisioner "file" {
     source      = "${var.tmp_service_file}"
-    destination      = "/tmp/your-app.service"
+    destination = "/tmp/your-app.service"
   }
 
   provisioner "shell" {
