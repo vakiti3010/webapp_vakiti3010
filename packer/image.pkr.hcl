@@ -19,7 +19,7 @@ variable "tmp_service_file" {
 
 variable "provision_file" {
   type    = string
-  default = ""
+  default = "provision.sh"
 }
 
 source "googlecompute" "centos-stream-8" {
