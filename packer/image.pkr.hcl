@@ -12,7 +12,7 @@ variable "source_file" {
   default = ""
 }
 
-variable "service_file" {
+variable "tmp_service_file" {
   type    = string
   default = ""
 }
@@ -52,7 +52,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "${var.service_file}"
+    source      = "${var.tmp_service_file}"
     destination      = "/tmp/your-app.service"
   }
 
