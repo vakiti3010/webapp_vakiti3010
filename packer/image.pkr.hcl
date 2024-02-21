@@ -1,9 +1,9 @@
 source "googlecompute" "centos-stream-8" {
-  project_id     = "csye6225-spring"
-  zone           = "us-central1-a"
-  image_name     = "my-app-image-{{timestamp}}"
+  project_id          = "csye6225-spring"
+  zone                = "us-central1-a"
+  image_name          = "my-app-image-{{timestamp}}"
   source_image_family = "centos-stream-8"
-  ssh_username   = "centos"
+  ssh_username        = "centos"
 }
 
 build {
@@ -11,8 +11,8 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo groupadd csye6225",  // Create the group first
-      "sudo useradd -m -g csye6225 -s /usr/sbin/nologin csye6225"  // Create the user
+      "sudo groupadd csye6225",                                   // Create the group first
+      "sudo useradd -m -g csye6225 -s /usr/sbin/nologin csye6225" // Create the user
     ]
   }
   provisioner "shell" {
@@ -28,7 +28,7 @@ build {
   }
 
   provisioner "file" {
-    source = "your-app.service" # Adjust the path here if needed
+    source      = "your-app.service"      # Adjust the path here if needed
     destination = "/tmp/your-app.service" # Temporary location
   }
 
