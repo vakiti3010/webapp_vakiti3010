@@ -28,5 +28,6 @@ jobs:
             echo "Packer template formatting is correct."
           fi 
 
+
       - name: Run packer validate
         run: packer validate packer/*.pkr.hcl
