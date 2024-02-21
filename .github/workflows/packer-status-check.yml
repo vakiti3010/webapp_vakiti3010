@@ -1,0 +1,31 @@
+name: Packer CI Status Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  packer-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Packer
+        uses: hashicorp/setup-packer@v1
+
+      - name: Run packer fmt
+        run: packer fmt *.pkr.hcl
+
+      - name: Check for Formatting Changes
+        id: check_modifications
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "::error::Packer template formatting needs to be fixed. Run 'packer fmt' locally."
+            exit 1
+          else
+            echo "Packer template formatting is correct."
+          fi 
+
+      - name: Run packer validate
+        run: packer validate *.pkr.hcl

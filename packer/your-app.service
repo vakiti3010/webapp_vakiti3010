@@ -1,0 +1,12 @@
+[Unit]
+Description=My Spring Boot Application
+After=syslog.target network.target
+
+[Service]
+User=csye6225  # Adjust the user if needed
+ExecStart=/usr/bin/java -jar /opt/your-app/your-app.jar
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
