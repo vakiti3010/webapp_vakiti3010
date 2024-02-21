@@ -1,48 +1,37 @@
-name: Packer Status Check
+name: Packer Check
 
-# Trigger: Run the workflow whenever a pull request is opened or modified
 on:
   pull_request:
-    branch: main
+    branches:
+      - main
+
 
 jobs:
-  packer-checks-and-build:
+  packer-check:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install MariaDB
+      - name: Packer init
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mariadb-server
+          cd packer 
+          packer init . 
 
-      - name: Start MariaDB Service
-        run: sudo service mariadb start
-
-      - name: Set up MySQL Root Password
+      - name: Packer Format Check
         run: |
-          sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'saikumar123';"
+          for template in $(find . -name '*.hcl'); do
+             packer fmt "$template"
+             if ! git diff --exit-code "$template"; then
+               echo "Packer template $template is not correctly formatted."
+               exit 1
+             fi
+           done
 
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: '17'
-          distribution: 'temurin'
 
-      - name: Run Integration Tests
-        env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/CSYE6225?createDatabaseIfNotExist=true
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: saikumar123
-        run: mvn -B verify
-        # Step 1: Install Missing Plugins
-      - name: Run packer init
-        run: packer init packer/
-
-      # Step 2: Format Check
-      - name: Run packer fmt
-        run: packer fmt -check packer/
-
-      # Step 3: Validation Check
-      - name: Run packer validate
-        run: packer validate packer/
+      - name: Packer Validate
+        run: |
+          for template in $(find . -name '*.hcl'); do
+            packer validate "$template"
+          done
