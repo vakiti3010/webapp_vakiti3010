@@ -11,13 +11,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install MariaDB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-server
+
+      - name: Start MariaDB Service
+        run: sudo service mariadb start
+
+      - name: Set up MySQL Root Password
+        run: |
+          sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'saikumar123';"
+
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Run mvn package
-        run: mvn package
+
+      - name: Run Integration Tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/CSYE6225?createDatabaseIfNotExist=true
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: saikumar123
+        run: mvn -B verify
         # Step 1: Install Missing Plugins
       - name: Run packer init
         run: packer init packer/
