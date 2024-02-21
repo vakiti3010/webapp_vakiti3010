@@ -46,14 +46,15 @@ jobs:
       - name: Run Packer init
         run: packer init packer/
 
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_KEY }}'
+
       - name: Build Packer Image
         env:
-          # Pass variables about test artifacts (if needed)
           SOURCE_FILE: target/webapp-0.0.1-SNAPSHOT.jar
           TMP_SERVICE_FILE: packer/your-app.service
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_KEY }}
         run: |
-          echo "$GOOGLE_APPLICATION_CREDENTIALS" > /tmp/keyfile.json
-          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/keyfile.json
           packer build packer/image.pkr.hcl
       
