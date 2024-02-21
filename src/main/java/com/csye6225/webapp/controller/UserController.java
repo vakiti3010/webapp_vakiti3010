@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -39,8 +40,22 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
+        for (Field field : userUpdateDTO.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                if (field.get(userUpdateDTO) != null &&
+                        !field.getName().equals("firstName") &&
+                        !field.getName().equals("lastName") &&
+                        !field.getName().equals("password")) {
+
+                    return ResponseEntity.badRequest().body("Invalid field in request");
+                }
+            } catch (IllegalAccessException e) {
+                // Handle if needed
+            }
+        }
+
         try {
-            // Proceed with updating the user
             User updatedUser = userService.updateUser(currentUsername, userUpdateDTO);
             // Return 204 No Content if the update was successful
             return ResponseEntity.noContent().build();
