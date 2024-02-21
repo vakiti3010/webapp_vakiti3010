@@ -6,19 +6,19 @@ on:
     branch: main
 
 jobs:
-  packer-checks:
-    runs-on: ubuntu-latest  # OS environment to run on
+  packer-checks-and-build:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3  # Checkout the repository
-      - uses: hashicorp/setup-packer@v2.0.1  # Setup Packer
-        with:
-          version: latest  # Or a specific version
+      - uses: actions/checkout@v3
 
-      # Step 1: Format Check
+      # Step 1: Install Missing Plugins
+      - name: Run packer init
+        run: packer init packer/
+
+      # Step 2: Format Check
       - name: Run packer fmt
-        run: packer fmt -check packer/ # -check flag makes it fail if changes are needed
-        if: failure()            # Only run validate if fmt succeeded
+        run: packer fmt -check packer/
 
-      # Step 2: Validation Check
+      # Step 3: Validation Check
       - name: Run packer validate
-        run: packer validate packer/  # Assuming your template is in the root
+        run: packer validate packer/
