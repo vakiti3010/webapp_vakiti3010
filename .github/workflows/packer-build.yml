@@ -1,15 +1,15 @@
 name: Integration Tests
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
 jobs:
   integration-tests:
-    name: INTEGRATION TEST
+    name: PACKER BUILD
     runs-on: ubuntu-latest
-    
+
 
     steps:
       - name: Install MariaDB
@@ -31,9 +31,31 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Build jar and run Maven
+        run: |
+            mvn install -DskipTests
+
+      - name: check jar
+        run: |
+          cd target 
+          ls 
+
       - name: Run Integration Tests
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/CSYE6225?createDatabaseIfNotExist=true
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: saikumar123
         run: mvn -B verify
+
+      - name: Run Packer init
+        run: packer init packer/
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_KEY }}'
+
+      - name: Build Packer Image
+        run: |
+          packer build -var 'source_file=/target/webapp-0.0.1-SNAPSHOT.jar' -var 'tmp_service_file=packer/your-app.service' packer/image.pkr.hcl
+      
