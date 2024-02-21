@@ -3,7 +3,7 @@ sudo cp /home/csye6225/your-app.jar /opt/your-app/
 sudo chown -R csye6225:csye6225 /opt/your-app
 sudo yum install -y java-17-openjdk
 
-# Install and configure MariaDB
+# Install and configure MariaDBok
 sudo dnf install mariadb-server -y
 sudo systemctl enable mariadb
 sudo systemctl start mariadb

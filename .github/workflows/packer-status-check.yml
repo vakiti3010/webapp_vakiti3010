@@ -11,7 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Step 1: Install Missing Plugins
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Run mvn package
+        run: mvn package
+        # Step 1: Install Missing Plugins
       - name: Run packer init
         run: packer init packer/
 
