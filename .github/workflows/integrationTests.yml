@@ -52,6 +52,8 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_ACCESS_KEY_ID }}
         run: echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -d > /tmp/keyfile.json
 
+      - name: Debug Keyfile Contents
+        run: cat /tmp/keyfile.json
 
       - name: Build Packer Image
         env:
