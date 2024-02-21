@@ -7,6 +7,21 @@ packer {
   }
 }
 
+variable "source_file" {
+  type    = string
+  default = ""
+}
+
+variable "service_file" {
+  type    = string
+  default = ""
+}
+
+variable "provision_file" {
+  type    = string
+  default = ""
+}
+
 source "googlecompute" "centos-stream-8" {
   project_id          = "vakiti-dev"
   zone                = "us-central1-a"
@@ -32,16 +47,17 @@ build {
   }
 
   provisioner "file" {
-    source      = "../target/webapp-0.0.1-SNAPSHOT.jar"
+    source      = "${var.source_file}"
     destination = "/home/csye6225/your-app.jar"
   }
 
   provisioner "file" {
     source      = "your-app.service"
-    destination = "/tmp/your-app.service"
+    source      = "${var.service_file}"
   }
 
   provisioner "shell" {
-    script = "provision.sh"
+    script = "${var.provision_file}"
   }
 }
+
