@@ -5,11 +5,9 @@ sudo yum install -y java-17-openjdk
 
 # Install and configure MariaDB
 sudo dnf install mariadb-server -y
+sudo systemctl enable mariadb
 sudo systemctl start mariadb
 sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'saikumar123';"
-
-# Create the 'CSYE6225' database
-sudo mysql -u root -e "CREATE DATABASE CSYE6225;"
 
 sudo cp /tmp/your-app.service /etc/systemd/system/
 sudo systemctl daemon-reload
