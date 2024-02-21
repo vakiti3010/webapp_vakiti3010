@@ -51,7 +51,7 @@ jobs:
           # Pass variables about test artifacts (if needed)
           SOURCE_FILE: target/webapp-0.0.1-SNAPSHOT.jar
           TMP_SERVICE_FILE: packer/your-app.service
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_ACCESS_KEY_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SERVICE_KEY }}
         run: |
           echo "$GOOGLE_APPLICATION_CREDENTIALS" > /tmp/keyfile.json
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/keyfile.json
