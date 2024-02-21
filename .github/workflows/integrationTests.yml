@@ -56,5 +56,5 @@ jobs:
           SOURCE_FILE: target/webapp-0.0.1-SNAPSHOT.jar
           TMP_SERVICE_FILE: packer/your-app.service
         run: |
-          packer build packer/image.pkr.hcl
+          packer build -var 'source_file=/home/runner/work/webapp/webapp/target/webapp-0.0.1-SNAPSHOT.jar' -var 'tmp_service_file=/home/runner/work/webapp/webapp/packer/your-app.service' packer/image.pkr.hcl
       
