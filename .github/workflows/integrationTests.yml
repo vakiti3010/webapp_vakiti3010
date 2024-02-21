@@ -46,19 +46,11 @@ jobs:
       - name: Run Packer init
         run: packer init packer/
 
-      # Pass credentials to Packer
-      - name: Set GCP Credentials
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_ACCESS_KEY_ID }}
-        run: echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -d > /tmp/keyfile.json
-
-      - name: Debug Keyfile Contents
-        run: cat /tmp/keyfile.json
-
       - name: Build Packer Image
         env:
           # Pass variables about test artifacts (if needed)
           SOURCE_FILE: target/webapp-0.0.1-SNAPSHOT.jar
           TMP_SERVICE_FILE: packer/your-app.service
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_ACCESS_KEY_ID }}
         run: packer build packer/image.pkr.hcl
       
