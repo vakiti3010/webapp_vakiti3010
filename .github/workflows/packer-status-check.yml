@@ -21,13 +21,12 @@ jobs:
       - name: Check for Formatting Changes
         id: check_modifications
         run: |
+          git config --global --add safe.directory /__w/webapp/webapp
           if [[ -n $(git status --porcelain) ]]; then
             echo "::error::Packer template formatting needs to be fixed. Run 'packer fmt' locally."
             exit 1
           else
             echo "Packer template formatting is correct."
-          fi 
-
-
+          fi
       - name: Run packer validate
         run: packer validate packer/*.pkr.hcl
