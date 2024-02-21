@@ -52,5 +52,8 @@ jobs:
           SOURCE_FILE: target/webapp-0.0.1-SNAPSHOT.jar
           TMP_SERVICE_FILE: packer/your-app.service
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_ACCESS_KEY_ID }}
-        run: packer build packer/image.pkr.hcl
+        run: |
+          echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -d > /tmp/keyfile.json 
+          cat /tmp/keyfile.json # Inspect the contents
+          packer build packer/image.pkr.hcl
       
