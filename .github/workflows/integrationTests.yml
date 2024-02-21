@@ -53,7 +53,7 @@ jobs:
           TMP_SERVICE_FILE: packer/your-app.service
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_ACCESS_KEY_ID }}
         run: |
-          echo $GOOGLE_APPLICATION_CREDENTIALS | base64 -d > /tmp/keyfile.json 
+          echo "$GOOGLE_APPLICATION_CREDENTIALS" > /tmp/keyfile.json
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/keyfile.json
           packer build packer/image.pkr.hcl
       
