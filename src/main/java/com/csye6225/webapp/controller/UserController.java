@@ -11,8 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -31,8 +33,16 @@ public class UserController {
         }
         User createdUser = userService.createUser(user);
         UserResponseDTO response = mapToUserResponseDTO(createdUser);
-        return ResponseEntity.ok(response);
+
+        // Return 201 Created with location header
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdUser.getId()).toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
+
 
     @PutMapping("/self")
     public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
