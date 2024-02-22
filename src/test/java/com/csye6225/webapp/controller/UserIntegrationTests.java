@@ -30,7 +30,7 @@ public class UserIntegrationTests {
         newUser.setUsername("username");
         ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v1/user", newUser, UserResponseDTO.class);
 
-        assertEquals(HttpStatus.OK, createResponse.getStatusCode());
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
 
         UserResponseDTO createdUser = createResponse.getBody();
         assertNotNull(createdUser);
@@ -72,7 +72,7 @@ public class UserIntegrationTests {
         newUser.setUsername("username1");
 
         ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v1/user", newUser, UserResponseDTO.class);
-        assertEquals(HttpStatus.OK, createResponse.getStatusCode());
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
 
         UserResponseDTO createdUser = createResponse.getBody();
         assertNotNull(createdUser);
