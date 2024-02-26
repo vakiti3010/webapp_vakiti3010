@@ -42,7 +42,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "${var.sourcefile}"
+    source      = "${var.source_file}"
     destination = "/home/csye6225/your-app.jar"
   }
 
