@@ -42,7 +42,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "${var.source_file}"
+    source      = "${var.sourcefile}"
     destination = "/home/csye6225/your-app.jar"
   }
 
@@ -52,7 +52,7 @@ build {
   }
 
   provisioner "shell" {
-    script =    "packer/provision.sh"
+    script = "packer/provision.sh"
   }
 }
 
