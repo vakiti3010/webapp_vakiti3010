@@ -4,7 +4,7 @@ After=syslog.target network.target
 
 [Service]
  # Adjust the user if needed
-ExecStart=/usr/bin/java -jar /opt/your-app/your-app.jar --spring.config.name=application --spring.config.location=file:/tmp/
+ExecStart=/usr/bin/java -jar /opt/your-app/your-app.jar --spring.config.name=application --spring.config.location=file:/opt/
 Restart=always
 RestartSec=10
 User=csye6225
