@@ -9,7 +9,7 @@ sudo cp /tmp/your-app.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable your-app.service
 
-cat ops-agent-config.yaml >> /etc/google-cloud-ops-agent/config.yaml
+sudo cat ops-agent-config.yaml >> /etc/google-cloud-ops-agent/config.yaml
 
 sudo systemctl restart google-cloud-ops-agent
 
