@@ -3,7 +3,7 @@ logging:
     myapplogs:
       type: files
       include_paths:
-        - /opt/your-app/log.txt
+        - /tmp/log.txt
 
   processors:
     myappparser:
