@@ -1,0 +1,17 @@
+logging:
+  receivers:
+    myapplogs:
+      type: files
+      include_paths:
+        - /opt/your-app/log.txt
+
+  processors:
+    myappparser:
+      type: regexp
+      regexp: ^\[(?P<timestamp>.*?)\] (?P<log_level>\w+) - (?P<message>.*)$
+
+  service:
+    pipelines:
+      default_log_pipeline:
+        receivers: [myapplogs]
+        processors: [myappparser]
