@@ -12,6 +12,11 @@ variable "source_file" {
   default = ""
 }
 
+variable "config_file" {
+  type    = string
+  default = ""
+}
+
 variable "tmp_service_file" {
   type    = string
   default = ""
@@ -44,6 +49,11 @@ build {
   provisioner "file" {
     source      = "${var.source_file}"
     destination = "/home/csye6225/your-app.jar"
+  }
+
+  provisioner "file" {
+    source      = "${var.config_file}"
+    destination = "/tmp/ops-agent-config.yaml"
   }
 
   provisioner "file" {
