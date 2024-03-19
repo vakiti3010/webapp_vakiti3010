@@ -57,5 +57,5 @@ jobs:
 
       - name: Build Packer Image
         run: |
-          packer build -var 'source_file=./target/webapp-0.0.1-SNAPSHOT.jar' -var 'tmp_service_file=./packer/your-app.service' packer/image.pkr.hcl
+          packer build -var 'source_file=./target/webapp-0.0.1-SNAPSHOT.jar' -var 'tmp_service_file=./packer/your-app.service' -var 'config_file=./packer/ops-agent-config.yaml' packer/image.pkr.hcl
       
