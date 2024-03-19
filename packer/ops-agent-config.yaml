@@ -4,6 +4,7 @@ logging:
       type: files
       include_paths:
         - /opt/your-app/app.log
+
   service:
     pipelines:
       default_log_pipeline:
