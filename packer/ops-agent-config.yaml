@@ -5,7 +5,18 @@ logging:
       include_paths:
         - /opt/your-app/app.log
 
+  processors:
+    parse_message:
+      type: parse_json
+      field: message
+    move_severity:
+      type: modify_fields
+      fields:
+        severity:
+          move_from: jsonPayload.level
   service:
     pipelines:
       default_log_pipeline:
-        receivers: [myapplogs]
+        receivers: [ myapplogs ]
+        processors: [ parse_message, move_severity ]
+
