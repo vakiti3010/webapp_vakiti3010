@@ -2,11 +2,18 @@
 <configuration>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>app.log</file>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <version>version</version>
+                <severity>level</severity>
+            </fieldNames>
+        </encoder>
+        <immediateFlush>true</immediateFlush>
     </appender>
 
     <root level="INFO">
         <appender-ref ref="FILE" />
     </root>
 </configuration>
-
