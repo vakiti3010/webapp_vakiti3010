@@ -1,4 +1,4 @@
-sudo mkdir -p /opt/your-app
+sudo mkdir -p /tmp/your-app
 sudo cp /home/csye6225/your-app.jar /tmp/your-app/
 sudo chown -R csye6225:csye6225 /tmp/your-app
 
