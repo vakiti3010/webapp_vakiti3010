@@ -18,5 +18,5 @@ logging:
     pipelines:
       default_log_pipeline:
         receivers: [ myapplogs ]
-        processors: [ parse_message, move_severity, reformat_timestamp ]
+        processors: [ parse_message, move_severity]
 
