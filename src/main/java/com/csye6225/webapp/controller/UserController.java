@@ -50,19 +50,12 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
-        for (Field field : userUpdateDTO.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                if (field.get(userUpdateDTO) != null &&
-                        !field.getName().equals("firstName") &&
-                        !field.getName().equals("lastName") &&
-                        !field.getName().equals("password")) {
+        if (!userUpdateDTO.hasRequiredFields()) {
+            return ResponseEntity.badRequest().body("Missing required fields");
+        }
 
-                    return ResponseEntity.badRequest().body("Invalid field in request");
-                }
-            } catch (IllegalAccessException e) {
-                // Handle if needed
-            }
+        if (!userUpdateDTO.hasOnlyValidFields()) {
+            return ResponseEntity.badRequest().body("Invalid fields in request");
         }
 
         try {

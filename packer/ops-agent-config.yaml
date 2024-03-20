@@ -3,7 +3,7 @@ logging:
     myapplogs:
       type: files
       include_paths:
-        - /tmp/app.log
+        - /opt/your-app/app.log
 
   service:
     pipelines:
