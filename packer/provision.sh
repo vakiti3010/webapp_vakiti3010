@@ -8,7 +8,7 @@ sudo bash add-google-cloud-ops-agent-repo.sh --also-install
 
 sudo cp /tmp/your-app.service /etc/systemd/system/
 sudo cp /tmp/ops-agent-config.yaml /opt/google-cloud-ops-agent/config.yaml
-
+sudo systemctl restart google-cloud-ops-agent"*"
 sudo systemctl daemon-reload
 sudo systemctl enable your-app.service
 
