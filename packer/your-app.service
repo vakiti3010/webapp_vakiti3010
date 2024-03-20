@@ -4,10 +4,11 @@ After=syslog.target network.target
 
 [Service]
  # Adjust the user if needed
-ExecStart=/usr/bin/java -jar /tmp/your-app/your-app.jar --spring.config.name=application --spring.config.location=file:/tmp/
+ExecStart=/usr/bin/java -jar /home/csye6225/your-app.jar --spring.config.name=application --spring.config.location=file:/tmp/
 Restart=always
 RestartSec=10
 User=csye6225
+WorkingDirectory=/home/csye6225
 
 [Install]
 WantedBy=multi-user.target
