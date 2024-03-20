@@ -1,6 +1,6 @@
-sudo mkdir -p /tmp/your-app
-sudo cp /home/csye6225/your-app.jar /tmp/your-app/
-sudo chown -R csye6225:csye6225 /tmp/your-app
+sudo mkdir -p /opt/your-app
+sudo cp /home/csye6225/your-app.jar /opt/your-app/
+sudo chown -R csye6225:csye6225 /opt/your-app
 
 sudo yum install -y java-17-openjdk
 curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
