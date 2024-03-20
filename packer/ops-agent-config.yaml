@@ -20,6 +20,7 @@ logging:
       time_format: '%Y-%m-%dT%H:%M:%S.%fZ'
       timezone: UTC
       output_format: '%Y-%m-%dT%H:%M:%S.%LZ'
+      
   service:
     pipelines:
       default_log_pipeline:
