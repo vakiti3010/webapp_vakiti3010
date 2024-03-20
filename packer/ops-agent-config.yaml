@@ -14,9 +14,16 @@ logging:
       fields:
         severity:
           move_from: jsonPayload.level
+    reformat_timestamp:
+      type: parse_timestamp
+      field: jsonPayload.timestamp
+      time_format: '%Y-%m-%dT%H:%M:%S.%fZ'
+      timezone: UTC
+      output_format: '%Y-%m-%dT%H:%M:%S.%LZ'
+      
   service:
     pipelines:
       default_log_pipeline:
         receivers: [ myapplogs ]
-        processors: [ parse_message, move_severity ]
+        processors: [ parse_message, move_severity, reformat_timestamp ]
 
