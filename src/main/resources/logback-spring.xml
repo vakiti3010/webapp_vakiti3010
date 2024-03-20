@@ -3,7 +3,7 @@
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>app.log</file>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-        <immediateFlush>true</immediateFlush> </appender>
+    </appender>
 
     <root level="DEBUG">
         <appender-ref ref="FILE" />
