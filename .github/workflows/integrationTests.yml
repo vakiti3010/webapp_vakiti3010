@@ -41,5 +41,4 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/CSYE6225?createDatabaseIfNotExist=true
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: saikumar123
-          GOOGLE_APPLICATION_CREDENTIALS: '${{ secrets.GCP_SERVICE_KEY }}'
         run: mvn -B verify
