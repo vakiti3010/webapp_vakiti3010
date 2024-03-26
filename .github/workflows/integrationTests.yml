@@ -31,10 +31,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_KEY }}'
+
       - name: Run Integration Tests
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/CSYE6225?createDatabaseIfNotExist=true
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: saikumar123
-          GOOGLE_APPLICATION_CREDENTIALS: '${{ secrets.GCP_SERVICE_KEY }}'
         run: mvn -B verify
