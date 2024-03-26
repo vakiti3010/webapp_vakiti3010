@@ -63,6 +63,7 @@ public class UserService {
         Publisher publisher = null;
 
         try {
+
             logger.info("Publishing message to topic {}", topicId);
 
             publisher = Publisher.newBuilder(topicName).build();
@@ -73,6 +74,7 @@ public class UserService {
             logger.info("Message published successfully to topic {}", topicId);
         } catch (Exception e) {
             logger.error("Error publishing message to Pub/Sub", e);
+
         } finally {
             if (publisher != null) {
                 try {
