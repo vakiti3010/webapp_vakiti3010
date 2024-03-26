@@ -8,11 +8,17 @@ import com.csye6225.webapp.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.protobuf.ByteString;
+import com.google.pubsub.v1.ProjectTopicName;
+import com.google.pubsub.v1.PubsubMessage;
+
 
 @Service
 public class UserService {
@@ -34,11 +40,7 @@ public class UserService {
             throw new UserAlreadyExistsException("User with email " + user.getUsername() + " already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // Publish message to Pub/Sub
-        String topicName = "verify_email";
-        String message = serializeUser(user);
-        pubSubTemplate.publish(topicName, message);
+        publishMessageToPubSub(user);
         return userRepository.save(user);
     }
 
@@ -48,7 +50,33 @@ public class UserService {
         return mapper.writeValueAsString(user);
     }
 
+    private void publishMessageToPubSub(User user) {
+        String projectId = "vakiti-dev";
+        String topicId = "verify_email";
+        Gson gson = new Gson();
+        String jsonData = gson.toJson(user);
 
+        ProjectTopicName topicName = ProjectTopicName.of(projectId, topicId);
+        Publisher publisher = null;
+
+        try {
+            publisher = Publisher.newBuilder(topicName).build();
+            ByteString data = ByteString.copyFromUtf8(jsonData);
+            PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
+            // Asynchronous publish (as before)
+            publisher.publish(pubsubMessage).get(); // Or handle asynchronously
+        } catch (Exception e) {
+            // Handle exceptions
+        } finally {
+            if (publisher != null) {
+                try {
+                    publisher.shutdown();
+                } catch (Exception e) {
+                    // Handle shutdown exceptions
+                }
+            }
+        }
+    }
 
     public User updateUser(String username, UserUpdateDTO updatedUserDetails) {
         User existingUser = userRepository.findByUsername(username)
