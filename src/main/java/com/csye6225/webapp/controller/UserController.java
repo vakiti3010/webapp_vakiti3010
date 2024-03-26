@@ -5,6 +5,7 @@ import com.csye6225.webapp.model.User;
 import com.csye6225.webapp.dto.UserResponseDTO;
 import com.csye6225.webapp.dto.UserUpdateDTO;
 import com.csye6225.webapp.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ResponseEntity<?> createUser(@RequestBody User user) throws JsonProcessingException {
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             return ResponseEntity.badRequest().body("Password cannot be empty.");
         }
