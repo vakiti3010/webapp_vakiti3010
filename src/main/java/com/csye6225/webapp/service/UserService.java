@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +33,8 @@ public class UserService {
 
     @Autowired
     private PubSubTemplate pubSubTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -59,24 +63,27 @@ public class UserService {
         Publisher publisher = null;
 
         try {
+            logger.info("Publishing message to topic {}", topicId);
+
             publisher = Publisher.newBuilder(topicName).build();
             ByteString data = ByteString.copyFromUtf8(jsonData);
             PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
-            // Asynchronous publish (as before)
+
             publisher.publish(pubsubMessage).get(); // Or handle asynchronously
+            logger.info("Message published successfully to topic {}", topicId);
         } catch (Exception e) {
-            // Handle exceptions
+            logger.error("Error publishing message to Pub/Sub", e);
         } finally {
             if (publisher != null) {
                 try {
                     publisher.shutdown();
+                    logger.info("Publisher shut down successfully");
                 } catch (Exception e) {
-                    // Handle shutdown exceptions
+                    logger.error("Error shutting down the publisher", e);
                 }
             }
         }
     }
-
     public User updateUser(String username, UserUpdateDTO updatedUserDetails) {
         User existingUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
