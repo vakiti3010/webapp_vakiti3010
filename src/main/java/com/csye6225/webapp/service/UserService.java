@@ -50,11 +50,10 @@ public class UserService {
         return mapper.writeValueAsString(user);
     }
 
-    private void publishMessageToPubSub(User user) {
+    private void publishMessageToPubSub(User user) throws JsonProcessingException {
         String projectId = "vakiti-dev";
         String topicId = "verify_email";
-        Gson gson = new Gson();
-        String jsonData = gson.toJson(user);
+        String jsonData = serializeUser(user);
 
         ProjectTopicName topicName = ProjectTopicName.of(projectId, topicId);
         Publisher publisher = null;
