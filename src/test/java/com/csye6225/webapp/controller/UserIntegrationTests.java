@@ -37,6 +37,14 @@ public class UserIntegrationTests {
         newUser.setUsername("username");
         ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v1/user", newUser, UserResponseDTO.class);
 
+        // Create and save a dummy verification token
+        VerificationToken dummyToken = new VerificationToken();
+        dummyToken.setToken("dummyToken");
+        dummyToken.setEmail(newUser.getUsername()); // Assuming username is the email
+        dummyToken.setExpiration(LocalDateTime.now().plusDays(1)); // Set future expiration
+        dummyToken.setVerified(true); // Mark as verified
+        tokenRepository.save(dummyToken);
+
         assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
 
         UserResponseDTO createdUser = createResponse.getBody();
@@ -80,7 +88,7 @@ public class UserIntegrationTests {
 
         // Create and save a dummy verification token
         VerificationToken dummyToken = new VerificationToken();
-        dummyToken.setToken("dummyToken");
+        dummyToken.setToken("dummyToken1");
         dummyToken.setEmail(newUser.getUsername()); // Assuming username is the email
         dummyToken.setExpiration(LocalDateTime.now().plusDays(1)); // Set future expiration
         dummyToken.setVerified(true); // Mark as verified
