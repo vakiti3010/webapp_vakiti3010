@@ -1,5 +1,6 @@
 package com.csye6225.webapp.service;
 
+import com.csye6225.webapp.exception.UnauthorizedException;
 import com.csye6225.webapp.exception.UserAlreadyExistsException;
 import com.csye6225.webapp.exception.UserNotFoundException;
 import com.csye6225.webapp.model.User;
@@ -99,7 +100,7 @@ public class UserService {
     public User updateUser(String username, UserUpdateDTO updatedUserDetails) {
         Optional<VerificationToken> token = tokenRepository.findByEmail(username);
         if (token.isEmpty() || !token.get().isVerified()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not verified");
+            throw new UnauthorizedException("User is not verified");
         }
 
         User existingUser = userRepository.findByUsername(username)
@@ -121,7 +122,7 @@ public class UserService {
     public User findByUsername(String username) {
         Optional<VerificationToken> token = tokenRepository.findByEmail(username);
         if (token.isEmpty() || !token.get().isVerified()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not verified");
+            throw new UnauthorizedException("User is not verified");
         }
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
