@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,14 +54,34 @@ public class UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     public User createUser(User user) throws JsonProcessingException {
+        logger.info("Attempting to create user with username: {}", user.getUsername());
+
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            logger.warn("User creation failed: User with email {} already exists", user.getUsername());
             throw new UserAlreadyExistsException("User with email " + user.getUsername() + " already exists");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        publishMessageToPubSub(user);
-        return userRepository.save(user);
-    }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        try {
+            publishMessageToPubSub(user);
+            logger.info("User data published to Pub/Sub for username: {}", user.getUsername());
+        } catch (Exception e) {
+            logger.error("Error while publishing message to Pub/Sub for username: {}", user.getUsername(), e);
+            // Rethrow, return null, or handle the exception as needed
+            throw new ServiceException("Failed to publish user data for " + user.getUsername(), e);
+        }
+
+        try {
+            User savedUser = userRepository.save(user);
+            logger.info("User created successfully with username: {}", user.getUsername());
+            return savedUser;
+        } catch (Exception e) {
+            logger.error("Error while saving user to the database for username: {}", user.getUsername(), e);
+            // Rethrow, return null, or handle the exception as needed
+            throw new ServiceException("Failed to save user to the database for " + user.getUsername(), e);
+        }
+    }
     private String serializeUser(User user) throws JsonProcessingException {
         // Consider using a JSON serialization library like Jackson
         ObjectMapper mapper = new ObjectMapper();
@@ -104,25 +126,39 @@ public class UserService {
         }
     }
     public User updateUser(String username, UserUpdateDTO updatedUserDetails) {
+        logger.info("Attempting to update user with username: {}", username);
+
         Optional<VerificationToken> token = tokenRepository.findByEmail(username);
         if (token.isEmpty() || !token.get().isVerified()) {
+            logger.warn("User update failed: User {} is not verified or token not found", username);
             throw new UnauthorizedException("User is not verified");
         }
 
         User existingUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        boolean isUpdated = false;
         if (updatedUserDetails.getFirstName() != null) {
             existingUser.setFirstName(updatedUserDetails.getFirstName());
+            isUpdated = true;
         }
         if (updatedUserDetails.getLastName() != null) {
             existingUser.setLastName(updatedUserDetails.getLastName());
+            isUpdated = true;
         }
         if (updatedUserDetails.getPassword() != null) {
             existingUser.setPassword(passwordEncoder.encode(updatedUserDetails.getPassword()));
+            isUpdated = true;
         }
 
-        return userRepository.save(existingUser);
+        if (isUpdated) {
+            User updatedUser = userRepository.save(existingUser);
+            logger.info("User successfully updated with username: {}", username);
+            return updatedUser;
+        } else {
+            logger.info("No changes made to the user with username: {}", username);
+            return existingUser;
+        }
     }
 
 
