@@ -119,16 +119,31 @@ public class UserService {
 
     @Transactional
     public boolean verifyUser(String token) {
+        logger.info("Attempting to verify token: {}", token);
         return tokenRepository.findByToken(token)
-                .filter(verificationToken -> !verificationToken.isVerified() && verificationToken.getExpiration().isAfter(LocalDateTime.now()))
+                .filter(verificationToken -> {
+                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime expiration = verificationToken.getExpiration();
+
+                    logger.info("Token: {}, Expiration time: {}, Current time: {}", token, expiration, now);
+
+                    boolean isValid = !verificationToken.isVerified() && expiration.isAfter(now);
+                    if (!isValid) {
+                        logger.warn("Token verification failed for token: {}. Either already verified or expired.", token);
+                    }
+                    return isValid;
+                })
                 .map(verificationToken -> {
                     // Update the token's verified status
                     verificationToken.setVerified(true);
                     tokenRepository.save(verificationToken);
-
+                    logger.info("Token verified successfully: {}", token);
                     return true;
                 })
-                .orElse(false);
+                .orElseGet(() -> {
+                    logger.warn("Token not found or invalid for token: {}", token);
+                    return false;
+                });
     }
 }
 
