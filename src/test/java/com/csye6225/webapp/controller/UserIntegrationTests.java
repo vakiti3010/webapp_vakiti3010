@@ -3,12 +3,16 @@ package com.csye6225.webapp.controller;
 import com.csye6225.webapp.dto.UserResponseDTO;
 import com.csye6225.webapp.dto.UserUpdateDTO;
 import com.csye6225.webapp.model.User;
+import com.csye6225.webapp.model.VerificationToken;
+import com.csye6225.webapp.repository.VerificationTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,6 +22,9 @@ public class UserIntegrationTests {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private VerificationTokenRepository tokenRepository;
 
 
     @Test
@@ -70,6 +77,14 @@ public class UserIntegrationTests {
         newUser.setLastName("Last");
         newUser.setPassword("password");
         newUser.setUsername("username1");
+
+        // Create and save a dummy verification token
+        VerificationToken dummyToken = new VerificationToken();
+        dummyToken.setToken("dummyToken");
+        dummyToken.setEmail(newUser.getUsername()); // Assuming username is the email
+        dummyToken.setExpiration(LocalDateTime.now().plusDays(1)); // Set future expiration
+        dummyToken.setVerified(true); // Mark as verified
+        tokenRepository.save(dummyToken);
 
         ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v1/user", newUser, UserResponseDTO.class);
         assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());

@@ -10,12 +10,12 @@ import com.csye6225.webapp.repository.VerificationTokenRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
-import com.google.gson.Gson;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,7 @@ import com.google.pubsub.v1.ProjectTopicName;
 import com.google.pubsub.v1.PubsubMessage;
 
 import jakarta.transaction.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
@@ -96,6 +97,11 @@ public class UserService {
         }
     }
     public User updateUser(String username, UserUpdateDTO updatedUserDetails) {
+        Optional<VerificationToken> token = tokenRepository.findByEmail(username);
+        if (token.isEmpty() || !token.get().isVerified()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not verified");
+        }
+
         User existingUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
@@ -113,6 +119,10 @@ public class UserService {
     }
 
     public User findByUsername(String username) {
+        Optional<VerificationToken> token = tokenRepository.findByEmail(username);
+        if (token.isEmpty() || !token.get().isVerified()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not verified");
+        }
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
