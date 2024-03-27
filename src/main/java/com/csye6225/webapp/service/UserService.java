@@ -119,6 +119,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+
     public User findByUsername(String username) {
         Optional<VerificationToken> token = tokenRepository.findByEmail(username);
         if (token.isEmpty() || !token.get().isVerified()) {
