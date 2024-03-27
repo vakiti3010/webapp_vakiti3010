@@ -10,6 +10,7 @@ import com.csye6225.webapp.repository.UserRepository;
 import com.csye6225.webapp.repository.VerificationTokenRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -62,6 +63,11 @@ public class UserService {
     private String serializeUser(User user) throws JsonProcessingException {
         // Consider using a JSON serialization library like Jackson
         ObjectMapper mapper = new ObjectMapper();
+        ObjectNode userNode = mapper.valueToTree(user);
+
+        // Remove the password attribute
+        userNode.remove("password");
+
         return mapper.writeValueAsString(user);
     }
 
