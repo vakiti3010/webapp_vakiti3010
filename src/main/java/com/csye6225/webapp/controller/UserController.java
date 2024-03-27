@@ -6,6 +6,9 @@ import com.csye6225.webapp.dto.UserResponseDTO;
 import com.csye6225.webapp.dto.UserUpdateDTO;
 import com.csye6225.webapp.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,33 +49,44 @@ public class UserController {
 
 
     @PutMapping("/self")
-    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
-        // Retrieve the authenticated user's username from the SecurityContextHolder
+    public ResponseEntity<?> updateUser(@RequestBody String requestBody) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
-        if (!userUpdateDTO.hasRequiredFields()) {
-            return ResponseEntity.badRequest().body("Missing required fields");
-        }
-
-        if (!userUpdateDTO.hasOnlyValidFields()) {
-            return ResponseEntity.badRequest().body("Invalid fields in request");
-        }
-
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(requestBody);
+
+            if (!isValidRequestBody(rootNode)) {
+                return ResponseEntity.badRequest().body("Invalid fields in request");
+            }
+
+            UserUpdateDTO userUpdateDTO = objectMapper.treeToValue(rootNode, UserUpdateDTO.class);
+
+            // Additional validation logic (if any)
+
             User updatedUser = userService.updateUser(currentUsername, userUpdateDTO);
             // Return 204 No Content if the update was successful
             return ResponseEntity.noContent().build();
+
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body("Invalid JSON format");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    private boolean isValidRequestBody(JsonNode rootNode) {
+        return rootNode.size() == 3 &&
+                rootNode.has("first_name") &&
+                rootNode.has("last_name") &&
+                rootNode.has("password");
+    }
     @GetMapping("/self")
-    public ResponseEntity<?> getUserDetails(@RequestBody(required = false) Object requestBody) {
-        // Check if there is a payload attached to the request
-        if (requestBody != null) {
-            return ResponseEntity.badRequest().body("GET requests should not include a request body.");
+    public ResponseEntity<?> getUserDetails(@RequestBody(required = false) Object requestBody, HttpServletRequest request) {
+        // Check if there is a payload or query parameters in the request
+        if (requestBody != null || !request.getParameterMap().isEmpty()) {
+            return ResponseEntity.badRequest().body("GET requests should not include a request body or query parameters.");
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
