@@ -1,4 +1,5 @@
 package com.csye6225.webapp.model;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@JsonFilter("userFilter")
 public class User {
 
     @Id

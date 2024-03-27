@@ -10,6 +10,8 @@ import com.csye6225.webapp.repository.UserRepository;
 import com.csye6225.webapp.repository.VerificationTokenRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -60,8 +62,16 @@ public class UserService {
     }
 
     private String serializeUser(User user) throws JsonProcessingException {
-        // Consider using a JSON serialization library like Jackson
         ObjectMapper mapper = new ObjectMapper();
+
+        // Define a filter to ignore the 'password' field
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("password");
+        SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("userFilter", filter);
+
+        // Apply the filter to the ObjectMapper
+        mapper.setFilterProvider(filters);
+
+        // Serialize the user object
         return mapper.writeValueAsString(user);
     }
 
