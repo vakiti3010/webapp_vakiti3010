@@ -68,7 +68,7 @@ public class UserService {
         // Remove the password attribute
         userNode.remove("password");
 
-        return mapper.writeValueAsString(user);
+        return mapper.writeValueAsString(userNode);
     }
 
     private void publishMessageToPubSub(User user) throws JsonProcessingException {
