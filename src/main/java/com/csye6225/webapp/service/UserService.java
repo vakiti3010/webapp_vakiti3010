@@ -4,11 +4,15 @@ import com.csye6225.webapp.exception.UserAlreadyExistsException;
 import com.csye6225.webapp.exception.UserNotFoundException;
 import com.csye6225.webapp.model.User;
 import com.csye6225.webapp.dto.UserUpdateDTO;
+import com.csye6225.webapp.model.VerificationToken;
 import com.csye6225.webapp.repository.UserRepository;
+import com.csye6225.webapp.repository.VerificationTokenRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import com.google.gson.Gson;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +25,17 @@ import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.ProjectTopicName;
 import com.google.pubsub.v1.PubsubMessage;
 
+import jakarta.transaction.Transactional;
+
 
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VerificationTokenRepository tokenRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -65,7 +74,7 @@ public class UserService {
         try {
 
             logger.info("Publishing message to topic {}", topicId);
-
+            logger.info(jsonData);
             publisher = Publisher.newBuilder(topicName).build();
             ByteString data = ByteString.copyFromUtf8(jsonData);
             PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
@@ -106,6 +115,20 @@ public class UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    @Transactional
+    public boolean verifyUser(String token) {
+        return tokenRepository.findByToken(token)
+                .filter(verificationToken -> !verificationToken.isVerified() && verificationToken.getExpiration().isAfter(LocalDateTime.now()))
+                .map(verificationToken -> {
+                    // Update the token's verified status
+                    verificationToken.setVerified(true);
+                    tokenRepository.save(verificationToken);
+
+                    return true;
+                })
+                .orElse(false);
     }
 }
 
