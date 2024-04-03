@@ -24,7 +24,7 @@ variable "tmp_service_file" {
 
 source "googlecompute" "centos-stream-8" {
   project_id          = "vakiti-dev"
-  zone                = "us-central1-a"
+  zone                = "us-west1-a"
   image_name          = "my-app-image-{{timestamp}}"
   source_image_family = "centos-stream-8"
   ssh_username        = "centos"
