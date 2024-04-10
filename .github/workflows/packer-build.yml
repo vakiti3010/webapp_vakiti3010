@@ -63,20 +63,17 @@ jobs:
         run: |
           cat packer-output.txt | grep 'A disk image was created' | awk '{print $NF}' > image-name.txt
 
-      - name: Create New Instance Template with Unique Name
+      - name: Create New Instance Template Based on Existing One
         run: |
-          TEMPLATE_NAME="new-template-$(date +%s)"
-          REGION="us-central1"
-          echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
+          NEW_TEMPLATE_NAME="new-template-$(date +%s)"
           IMAGE_NAME=$(cat image-name.txt)
-          gcloud compute instance-templates create $TEMPLATE_NAME \
+          echo "TEMPLATE_NAME=$NEW_TEMPLATE_NAME" >> $GITHUB_ENV
+          EXISTING_TEMPLATE_NAME="existing-template-name"
+          gcloud compute instance-templates describe $EXISTING_TEMPLATE_NAME --project=vakiti-dev --format=json > template-config.json
+          gcloud compute instance-templates create $NEW_TEMPLATE_NAME \
+            --source-instance-template=$EXISTING_TEMPLATE_NAME \
             --project=vakiti-dev \
-            --region=$REGION
-            --machine-type=e2-medium \
             --image=$IMAGE_NAME \
-            --network=projects/vakiti-dev/global/networks/custom-vpc \
-            --source-instance=webapp-template-20240410003052159600000001 \
-            --instantiate-from=$IMAGE_NAME
 
       - name: Update Managed Instance Group
         run: |
