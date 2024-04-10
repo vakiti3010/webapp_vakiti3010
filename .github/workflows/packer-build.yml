@@ -68,43 +68,36 @@ jobs:
          TEMPLATE_NAME="new-template-$(date +%s)"
           echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
           IMAGE_NAME=$(cat image-name.txt)
-          DISK_NAME="persistent-disk-0"
-          PROJECT="vakiti-dev"
-          REGION="us-central1"
-          gcloud config set project $PROJECT
+          gcloud config set project ${{ secrets.PROJECT_ID }}
           output=$(gcloud compute instances list --format="table(name,zone)" | tail -n 1);instance_name=$(echo "$output" | awk '{print $1}');zone=$(echo "$output" | awk '{print $2}');
           gcloud compute instance-templates create $TEMPLATE_NAME \
-            --source-instance=projects/$PROJECT/zones/$zone/instances/$instance_name \
+            --source-instance=projects/${{ secrets.PROJECT_ID }}/zones/$zone/instances/$instance_name \
             --source-instance-zone=$zone \
-            --instance-template-region=$REGION \
-            --configure-disk=device-name=$DISK_NAME,instantiate-from=custom-image,custom-image=projects/$PROJECT/global/images/$IMAGE_NAME
+            --instance-template-region=${{ secrets.REGION }} \
+            --configure-disk=device-name=persistent-disk-0,instantiate-from=custom-image,custom-image=projects/${{ secrets.PROJECT_ID }}/global/images/$IMAGE_NAME
 
       - name: Update Managed Instance Group
         run: |
-          INSTANCE_GROUP="webapp-manager"
-          REGION="us-central1"
-          FULL_TEMPLATE_PATH="projects/vakiti-dev/regions/us-central1/instanceTemplates/$TEMPLATE_NAME"
-          gcloud compute instance-groups managed set-instance-template $INSTANCE_GROUP \
+          FULL_TEMPLATE_PATH="projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/$TEMPLATE_NAME"
+          gcloud compute instance-groups managed set-instance-template ${{ secrets.INSTANCE_GROUP }} \
             --template=$FULL_TEMPLATE_PATH \
             --project=vakiti-dev \
-            --region=$REGION
+            --region=${{ secrets.REGION }}
             
 
       - name: Start Rolling Update
         run: |
-          INSTANCE_GROUP="webapp-manager"
-          REGION="us-central1"
-          FULL_TEMPLATE_PATH="projects/vakiti-dev/regions/us-central1/instanceTemplates/$TEMPLATE_NAME"
-          gcloud compute instance-groups managed rolling-action start-update $INSTANCE_GROUP \
+          FULL_TEMPLATE_PATH="projects/${{ secrets.PROJECT_ID }}/regions/${{ secrets.REGION }}/instanceTemplates/$TEMPLATE_NAME"
+          gcloud compute instance-groups managed rolling-action start-update ${{ secrets.INSTANCE_GROUP }} \
             --version template=$FULL_TEMPLATE_PATH \
-            --project=vakiti-dev \
-            --region=$REGION
+            --project=${{ secrets.PROJECT_ID }} \
+            --region=${{ secrets.REGION }}
 
       - name: Wait for Rolling Update to Complete
         run: |
-          INSTANCE_GROUP="webapp-manager"
-          REGION="us-central1"
-          PROJECT_ID="vakiti-dev"
+          INSTANCE_GROUP=${{ secrets.INSTANCE_GROUP }}
+          REGION=${{ secrets.REGION }}
+          PROJECT_ID=${{ secrets.PROJECT_ID }}
           UPDATE_FAILED=false
           MAX_RETRIES=40
           count=0
