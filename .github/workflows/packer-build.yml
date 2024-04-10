@@ -68,12 +68,12 @@ jobs:
           NEW_TEMPLATE_NAME="new-template-$(date +%s)"
           IMAGE_NAME=$(cat image-name.txt)
           echo "TEMPLATE_NAME=$NEW_TEMPLATE_NAME" >> $GITHUB_ENV
-          EXISTING_TEMPLATE_NAME="existing-template-name"
+          EXISTING_TEMPLATE_NAME="webapp-template-20240410003052159600000001"
           gcloud compute instance-templates describe $EXISTING_TEMPLATE_NAME --project=vakiti-dev --format=json > template-config.json
           gcloud compute instance-templates create $NEW_TEMPLATE_NAME \
             --source-instance-template=$EXISTING_TEMPLATE_NAME \
             --project=vakiti-dev \
-            --image=$IMAGE_NAME \
+            --image=$IMAGE_NAME
 
       - name: Update Managed Instance Group
         run: |
