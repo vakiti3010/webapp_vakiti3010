@@ -83,7 +83,7 @@ jobs:
         run: |
           INSTANCE_GROUP="webapp-manager"
           REGION="us-central1"
-          FULL_TEMPLATE_PATH="projects/$PROJECT/regions/us-central1/instanceTemplates/$TEMPLATE_NAME"
+          FULL_TEMPLATE_PATH="projects/vakiti-dev/regions/us-central1/instanceTemplates/$TEMPLATE_NAME"
           gcloud compute instance-groups managed set-instance-template $INSTANCE_GROUP \
             --template=$FULL_TEMPLATE_PATH \
             --project=vakiti-dev \
