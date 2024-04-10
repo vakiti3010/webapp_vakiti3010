@@ -75,7 +75,6 @@ jobs:
           gcloud compute instance-templates create $TEMPLATE_NAME \
             --source-instance=projects/$PROJECT/zones/$zone/instances/$instance_name \
             --source-instance-zone=$zone \
-            --source-instance-region=us-central1 \
             --configure-disk=device-name=$DISK_NAME,instantiate-from=custom-image,custom-image=projects/$PROJECT/global/images/$IMAGE_NAME
 
       - name: Update Managed Instance Group
