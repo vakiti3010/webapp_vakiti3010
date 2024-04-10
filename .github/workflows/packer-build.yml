@@ -58,4 +58,66 @@ jobs:
       - name: Build Packer Image
         run: |
           packer build -var 'source_file=./target/webapp-0.0.1-SNAPSHOT.jar' -var 'tmp_service_file=./packer/your-app.service' -var 'config_file=./packer/ops-agent-config.yaml' packer/image.pkr.hcl
+
+      - name: Extract Image Name
+        run: |
+          cat packer-output.txt | grep 'A disk image was created:' | awk '{print $NF}' > image-name.txt
+
+      - name: Create New Instance Template with Unique Name
+        run: |
+          TEMPLATE_NAME="new-template-$(date +%s)"
+          IMAGE_NAME=$(cat image-name.txt)
+          gcloud compute instance-templates create $TEMPLATE_NAME \
+            --project=vakiti-dev \
+            --machine-type=e2-medium \
+            --image=$IMAGE_NAME \
+
+      - name: Update Managed Instance Group
+        run: |
+          gcloud compute instance-groups managed set-instance-template webapp_manager \
+            --template=$TEMPLATE_NAME \
+            --project=vakiti-dev
+
+      - name: Start Rolling Update
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update webapp_manager \
+            --version template=$TEMPLATE_NAME \
+            --project=vakiti-dev \
+            --zone=us-central1-a
+
+      - name: Wait for Rolling Update to Complete
+        run: |
+          INSTANCE_GROUP="webapp_manager"
+          ZONE="us-central1-a"
+          PROJECT_ID="vakiti-dev"
+          UPDATE_FAILED=false
+
+          while true; do
+            STATUS=$(gcloud compute instance-groups managed describe $INSTANCE_GROUP \
+                     --project=$PROJECT_ID \
+                     --zone=$ZONE \
+                     --format="value(status.isStable)")
+
+            ERRORS=$(gcloud compute instance-groups managed list-errors $INSTANCE_GROUP \
+                     --project=$PROJECT_ID \
+                     --zone=$ZONE \
+                     --format="value(error.errors[].message)")
+
+            if [ "$STATUS" == "True" ]; then
+              echo "Rolling update completed successfully."
+              break
+            elif [ -n "$ERRORS" ]; then
+              echo "Errors detected during rolling update: $ERRORS"
+              UPDATE_FAILED=true
+              break
+            else
+              echo "Waiting for rolling update to complete..."
+              sleep 30
+            fi
+          done
+
+          if [ "$UPDATE_FAILED" = true ]; then
+            echo "Rolling update failed. Exiting with error."
+            exit 1
+          fi
       
