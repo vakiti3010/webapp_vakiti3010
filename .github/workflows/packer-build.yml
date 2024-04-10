@@ -77,38 +77,38 @@ jobs:
       - name: Update Managed Instance Group
         run: |
           INSTANCE_GROUP="webapp-manager"
-          ZONE="us-central1-a"
+          REGION="us-central1"
           gcloud compute instance-groups managed set-instance-template $INSTANCE_GROUP \
             --template=$TEMPLATE_NAME \
             --project=vakiti-dev \
-            --zone=$ZONE
-
+            --region=$REGION
+            
 
       - name: Start Rolling Update
         run: |
           INSTANCE_GROUP="webapp-manager"
-          ZONE="us-central1-a"
+          REGION="us-central1"
           gcloud compute instance-groups managed rolling-action start-update $INSTANCE_GROUP \
             --version template=$TEMPLATE_NAME \
             --project=vakiti-dev \
-            --zone=$ZONE
+            --region=$REGION
 
       - name: Wait for Rolling Update to Complete
         run: |
           INSTANCE_GROUP="webapp-manager"
-          ZONE="us-central1-a"
+          REGION="us-central1"
           PROJECT_ID="vakiti-dev"
           UPDATE_FAILED=false
 
           while true; do
             STATUS=$(gcloud compute instance-groups managed describe $INSTANCE_GROUP \
                      --project=$PROJECT_ID \
-                     --zone=$ZONE \
+                     --region=$REGION \
                      --format="value(status.isStable)")
 
             ERRORS=$(gcloud compute instance-groups managed list-errors $INSTANCE_GROUP \
                      --project=$PROJECT_ID \
-                     --zone=$ZONE \
+                     --region=$REGION \
                      --format="value(error.errors[].message)")
 
             if [ "$STATUS" == "True" ]; then
