@@ -65,15 +65,18 @@ jobs:
 
       - name: Create New Instance Template Based on Existing One
         run: |
-          NEW_TEMPLATE_NAME="new-template-$(date +%s)"
-          echo "TEMPLATE_NAME=$NEW_TEMPLATE_NAME" >> $GITHUB_ENV
-          EXISTING_TEMPLATE_NAME="webapp-template-20240410003052159600000001"
+         TEMPLATE_NAME="new-template-$(date +%s)"
+          echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
           IMAGE_NAME=$(cat image-name.txt)
-          gcloud compute instance-templates create $NEW_TEMPLATE_NAME \
-            --source-instance-template=$EXISTING_TEMPLATE_NAME \
-            --project=vakiti-dev \
-            --image=$IMAGE_NAME \
-            --network=projects/vakiti-dev/global/networks/custom-vpc
+          DISK_NAME="persistent-disk-0"
+          PROJECT="vakiti-dev"
+          gcloud config set project $PROJECT
+          output=$(gcloud compute instances list --format="table(name,zone)" | tail -n 1);instance_name=$(echo "$output" | awk '{print $1}');zone=$(echo "$output" | awk '{print $2}');
+          gcloud compute instance-templates create $TEMPLATE_NAME \
+            --source-instance=projects/$PROJECT/zones/$zone/instances/$instance_name \
+            --source-instance-zone=$zone \
+            --source-instance-region=us-central1 \
+            --configure-disk=device-name=$DISK_NAME,instantiate-from=custom-image,custom-image=projects/$PROJECT/global/images/$IMAGE_NAME
 
       - name: Update Managed Instance Group
         run: |
