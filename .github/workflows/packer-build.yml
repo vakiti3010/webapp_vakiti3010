@@ -94,8 +94,9 @@ jobs:
         run: |
           INSTANCE_GROUP="webapp-manager"
           REGION="us-central1"
+          FULL_TEMPLATE_PATH="projects/vakiti-dev/regions/us-central1/instanceTemplates/$TEMPLATE_NAME"
           gcloud compute instance-groups managed rolling-action start-update $INSTANCE_GROUP \
-            --version template=$TEMPLATE_NAME \
+            --version template=$FULL_TEMPLATE_PATH \
             --project=vakiti-dev \
             --region=$REGION
 
