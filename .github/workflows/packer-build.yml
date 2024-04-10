@@ -73,7 +73,7 @@ jobs:
           gcloud compute instance-templates create $NEW_TEMPLATE_NAME \
             --source-instance-template=$EXISTING_TEMPLATE_NAME \
             --project=vakiti-dev \
-            --image=$IMAGE_NAME \
+            --image=$IMAGE_NAME
 
       - name: Update Managed Instance Group
         run: |
