@@ -65,7 +65,8 @@ jobs:
 
       - name: Create New Instance Template with Unique Name
         run: |
-          echo "TEMPLATE_NAME=new-template-$(date +%s)" >> $GITHUB_ENV
+          TEMPLATE_NAME="new-template-$(date +%s)"
+          echo "TEMPLATE_NAME=$TEMPLATE_NAME" >> $GITHUB_ENV
           IMAGE_NAME=$(cat image-name.txt)
           gcloud compute instance-templates create $TEMPLATE_NAME \
             --project=vakiti-dev \
