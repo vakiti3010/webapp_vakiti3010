@@ -65,12 +65,13 @@ jobs:
 
       - name: Create New Instance Template with Unique Name
         run: |
-          TEMPLATE_NAME="new-template-$(date +%s)"
+          echo "TEMPLATE_NAME=new-template-$(date +%s)" >> $GITHUB_ENV
           IMAGE_NAME=$(cat image-name.txt)
           gcloud compute instance-templates create $TEMPLATE_NAME \
             --project=vakiti-dev \
             --machine-type=e2-medium \
-            --image=$IMAGE_NAME \
+            --image=$IMAGE_NAME
+
 
       - name: Update Managed Instance Group
         run: |
@@ -84,6 +85,8 @@ jobs:
 
       - name: Start Rolling Update
         run: |
+          INSTANCE_GROUP="webapp_manager"
+          ZONE="us-central1-a"
           gcloud compute instance-groups managed rolling-action start-update $INSTANCE_GROUP \
             --version template=$TEMPLATE_NAME \
             --project=vakiti-dev \
