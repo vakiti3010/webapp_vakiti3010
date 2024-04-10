@@ -76,7 +76,7 @@ jobs:
 
       - name: Update Managed Instance Group
         run: |
-          INSTANCE_GROUP="webapp_manager"
+          INSTANCE_GROUP="webapp-manager"
           ZONE="us-central1-a"
           gcloud compute instance-groups managed set-instance-template $INSTANCE_GROUP \
             --template=$TEMPLATE_NAME \
@@ -86,7 +86,7 @@ jobs:
 
       - name: Start Rolling Update
         run: |
-          INSTANCE_GROUP="webapp_manager"
+          INSTANCE_GROUP="webapp-manager"
           ZONE="us-central1-a"
           gcloud compute instance-groups managed rolling-action start-update $INSTANCE_GROUP \
             --version template=$TEMPLATE_NAME \
@@ -95,7 +95,7 @@ jobs:
 
       - name: Wait for Rolling Update to Complete
         run: |
-          INSTANCE_GROUP="webapp_manager"
+          INSTANCE_GROUP="webapp-manager"
           ZONE="us-central1-a"
           PROJECT_ID="vakiti-dev"
           UPDATE_FAILED=false
