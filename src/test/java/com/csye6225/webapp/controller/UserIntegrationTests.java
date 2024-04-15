@@ -35,7 +35,7 @@ public class UserIntegrationTests {
         newUser.setLastName("Last");
         newUser.setPassword("password");
         newUser.setUsername("username");
-        ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v1/user", newUser, UserResponseDTO.class);
+        ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v20/user", newUser, UserResponseDTO.class);
 
         // Create and save a dummy verification token
         VerificationToken dummyToken = new VerificationToken();
@@ -58,9 +58,9 @@ public class UserIntegrationTests {
         headers.setBasicAuth(username, password);
 
         // Validate user exists
-        //UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/v1/user/self");
+        //UriComponentsBuilder builder = UriComponentsBuilder.fromPath("/v20/user/self");
         ResponseEntity<UserResponseDTO> getResponse = restTemplate.exchange(
-                "/v1/user/self",
+                "/v20/user/self",
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 UserResponseDTO.class
@@ -94,7 +94,7 @@ public class UserIntegrationTests {
         dummyToken.setVerified(true); // Mark as verified
         tokenRepository.save(dummyToken);
 
-        ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v1/user", newUser, UserResponseDTO.class);
+        ResponseEntity<UserResponseDTO> createResponse = restTemplate.postForEntity("/v20/user", newUser, UserResponseDTO.class);
         assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
 
         UserResponseDTO createdUser = createResponse.getBody();
@@ -114,7 +114,7 @@ public class UserIntegrationTests {
         userUpdateDTO.setPassword("password");
 
         ResponseEntity<UserResponseDTO> updateResponse = restTemplate.exchange(
-                "/v1/user/self",
+                "/v20/user/self",
                 HttpMethod.PUT,
                 new HttpEntity<>(userUpdateDTO, headers),
                 UserResponseDTO.class
@@ -124,7 +124,7 @@ public class UserIntegrationTests {
 
         // Validate that the user's information was updated
         ResponseEntity<UserResponseDTO> getResponse = restTemplate.exchange(
-                "/v1/user/self",
+                "/v20/user/self",
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 UserResponseDTO.class
