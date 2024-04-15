@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
-@RequestMapping("v1/user")
+@RequestMapping("v20/user")
 public class UserController {
 
     @Autowired
